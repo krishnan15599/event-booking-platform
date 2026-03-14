@@ -1,18 +1,28 @@
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingRoutes from './routes/LandingRoutes';
+import AdminRoutes from './routes/AdminRoutes';
+import './App.css';
 
+/**
+ * App.tsx
+ * 
+ * Central Router:
+ * Connects the two separate modules (Landing and Admin) independently.
+ */
 function App() {
   return (
-    <div className="main-wrapper">
-      <div className="animated-bg"></div>
-      <div className="content-container">
-        <h1 className="welcome-text">Hello welcome</h1>
-        <div className="sub-text">Your Event Booking Platform is ready.</div>
-        <div className="glass-card">
-          <p>This is your starting point. Landing Page and Admin CRM folders are prepared in the source.</p>
-        </div>
+    <Router>
+      <div className="app-main">
+        <Routes>
+          {/* Admin Section: URLs starting with /admin */}
+          <Route path="/admin/*" element={<AdminRoutes />} />
+
+          {/* Landing Section: Everything else */}
+          <Route path="/*" element={<LandingRoutes />} />
+        </Routes>
       </div>
-    </div>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;

@@ -1,101 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+/* Main App Global Styles */
 
-:root {
-  --primary: #6366f1;
-  --secondary: #a855f7;
-  --bg-dark: #0f172a;
-  --text-light: #f8fafc;
+.app-main {
+  min-height: 100vh;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Outfit', sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-light);
-  overflow: hidden;
-}
-
-.main-wrapper {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.animated-bg {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at center, var(--primary) 0%, transparent 40%),
-              radial-gradient(circle at 20% 30%, var(--secondary) 0%, transparent 30%),
-              radial-gradient(circle at 80% 70%, #3b82f6 0%, transparent 30%);
-  filter: blur(80px);
-  opacity: 0.4;
-  animation: rotate 20s linear infinite;
-  z-index: 0;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.content-container {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-}
-
-.welcome-text {
-  font-size: 5rem;
-  font-weight: 800;
-  margin: 0;
-  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: fadeInDown 1s ease-out;
-}
-
-.sub-text {
-  font-size: 1.5rem;
-  margin-top: 1rem;
-  opacity: 0.8;
-  animation: fadeIn 1.5s ease-out;
-}
-
-.glass-card {
-  margin-top: 3rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  max-width: 500px;
-  animation: fadeInUp 1s ease-out;
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-50px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(50px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
+/* Page transitions could go here */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main {
+  animation: fadeIn 0.5s ease-out;
 }
