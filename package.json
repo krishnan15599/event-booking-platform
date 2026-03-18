@@ -1,0 +1,17 @@
+{
+  "name": "booking-app",
+  "private": true,
+  "workspaces": [
+    "frontend/landing",
+    "frontend/admin-crm",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev:landing": "npm run dev -w frontend/landing",
+    "dev:admin": "npm run dev -w frontend/admin-crm",
+    "dev:backend": "npm run dev -w backend",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  }
+}
