@@ -12,6 +12,17 @@
     "dev:admin": "npm run dev -w frontend/admin-crm",
     "dev:backend": "npm run dev -w backend",
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^15.15.0",
+    "typescript-eslint": "^8.25.0"
   }
 }
