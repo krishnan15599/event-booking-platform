@@ -7,12 +7,251 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+///////////////////////
+// ENUMS
+///////////////////////
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+enum SeatStatus {
+  AVAILABLE
+  LOCKED
+  BOOKED
+}
+
+enum SeatType {
+  STANDARD
+  PREMIUM
+  VIP
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum ShowStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+///////////////////////
+// USER
+///////////////////////
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  phone        String?
+  role         Role      @default(USER)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  bookings     Booking[]
+  events       Event[]   @relation("CreatedBy")
+
+  @@index([email])
+}
+
+///////////////////////
+// VENUE
+///////////////////////
+
+model Venue {
+  id        String   @id @default(uuid())
+  name      String
+  city      String
+  address   String?
+
+  createdAt DateTime @default(now())
+
+  shows     Show[]
+}
+
+///////////////////////
+// EVENT
+///////////////////////
+
 model Event {
-  id          String   @id @default(cuid())
+  id          String     @id @default(uuid())
   title       String
-  description String
-  date        DateTime
-  location    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description String?
+  city        String
+
+  startTime   DateTime
+  endTime     DateTime
+  status      ShowStatus @default(SCHEDULED)
+
+  createdBy   String
+  creator     User       @relation("CreatedBy", fields: [createdBy], references: [id])
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  shows       Show[]
+
+  @@index([createdBy])
+}
+
+///////////////////////
+// MOVIE
+///////////////////////
+
+model Movie {
+  id           String   @id @default(uuid())
+  title        String
+  genre        String
+  language     String
+  durationMins Int
+  posterUrl    String?
+  releaseDate  DateTime
+  status       String   @default("ACTIVE")
+
+  createdAt    DateTime @default(now())
+
+  shows        Show[]
+}
+
+///////////////////////
+// SHOW
+///////////////////////
+
+model Show {
+  id        String    @id @default(uuid())
+
+  movieId   String?
+  eventId   String?
+
+  venueId   String
+  venue     Venue    @relation(fields: [venueId], references: [id])
+
+  startTime DateTime
+  basePrice Decimal   @db.Decimal(10, 2)
+
+  status    ShowStatus @default(SCHEDULED)
+
+  movie     Movie?    @relation(fields: [movieId], references: [id])
+  event     Event?    @relation(fields: [eventId], references: [id])
+
+  seats     Seat[]
+  bookings  Booking[]
+
+  createdAt DateTime  @default(now())
+
+  @@index([startTime])
+  @@index([venueId])
+}
+
+///////////////////////
+// SEAT
+///////////////////////
+
+model Seat {
+  id           String        @id @default(uuid())
+  showId       String
+  row          String
+  number       String
+
+  type         SeatType      @default(STANDARD)
+  status       SeatStatus    @default(AVAILABLE)
+
+  price        Decimal       @db.Decimal(10, 2)
+
+  // 🔥 Seat locking
+  lockedAt     DateTime?
+  lockedBy     String?
+
+  show         Show          @relation(fields: [showId], references: [id])
+  bookingSeats BookingSeat[]
+
+  createdAt    DateTime      @default(now())
+
+  @@unique([showId, row, number])
+  @@index([showId])
+}
+
+///////////////////////
+// BOOKING
+///////////////////////
+
+model Booking {
+  id          String        @id @default(uuid())
+  userId      String
+  showId      String
+
+  status      BookingStatus @default(PENDING)
+  totalAmount Decimal       @db.Decimal(10, 2)
+
+  bookedAt    DateTime      @default(now())
+  expiresAt   DateTime?
+
+  user        User          @relation(fields: [userId], references: [id])
+  show        Show          @relation(fields: [showId], references: [id])
+
+  seats       BookingSeat[]
+  payment     Payment?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([showId])
+}
+
+///////////////////////
+// BOOKING SEAT
+///////////////////////
+
+model BookingSeat {
+  id        String  @id @default(uuid())
+  bookingId String
+  seatId    String
+
+  pricePaid Decimal @db.Decimal(10, 2)
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  seat      Seat    @relation(fields: [seatId], references: [id])
+
+  @@unique([bookingId, seatId])
+}
+
+///////////////////////
+// PAYMENT
+///////////////////////
+
+model Payment {
+  id               String        @id @default(uuid())
+  bookingId        String        @unique
+
+  provider         String        @default("stripe")
+  transactionId    String?
+
+  amount           Decimal       @db.Decimal(10, 2)
+  currency         String        @default("INR")
+
+  status           PaymentStatus @default(PENDING)
+
+  providerResponse Json?
+
+  paidAt           DateTime?
+
+  booking          Booking       @relation(fields: [bookingId], references: [id])
+
+  createdAt        DateTime      @default(now())
 }
